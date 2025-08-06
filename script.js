@@ -73,3 +73,8 @@ function updateLanguage() {
 
 langSelect.addEventListener("change", updateLanguage);
 updateLanguage();
+
+
+
+const user = localStorage.getItem("loggedInUser");
+document.getElementById("welcomeUser").textContent = `Καλωσήρθες, ${user}`;
