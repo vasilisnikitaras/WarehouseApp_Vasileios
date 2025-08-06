@@ -78,3 +78,10 @@ updateLanguage();
 
 const user = localStorage.getItem("loggedInUser");
 document.getElementById("welcomeUser").textContent = `Καλωσήρθες, ${user}`;
+
+
+
+function logout() {
+  localStorage.removeItem("loggedInUser");
+  window.location.href = "login.html";
+}
