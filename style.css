@@ -75,3 +75,14 @@ input[type="text"], input[type="number"] {
   padding: 0.5rem;
   margin-right: 0.5rem;
 }
+
+#logoutBtn {
+  background-color: #d9534f; /* κόκκινο */
+  margin-top: 1rem;
+}
+
+#logoutBtn:hover {
+  opacity: 0.9;
+}
+
+
