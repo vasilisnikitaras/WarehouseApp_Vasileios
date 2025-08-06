@@ -1,3 +1,10 @@
+// Έλεγχος σύνδεσης
+if (!localStorage.getItem("loggedInUser")) {
+  window.location.href = "login.html";
+}
+
+// Μετά συνεχίζει ο υπόλοιπος κώδικας:
+
 const translations = {
   el: {
     title: "Αποθήκη Vasileios",
