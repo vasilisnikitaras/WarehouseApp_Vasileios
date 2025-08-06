@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Αποθήκη Vasileios</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1 id="title">Αποθήκη Vasileios</h1>
+  </header>
+
+  <div class="container">
+    <div class="lang-select">
+      <label for="lang">Γλώσσα:</label>
+      <select id="lang">
+        <option value="el">Ελληνικά</option>
+        <option value="en">English</option>
+        <option value="fr">Français</option>
+      </select>
+    </div>
+
+    <div>
+      <input type="text" id="itemName" placeholder="Όνομα αντικειμένου" />
+      <input type="number" id="itemQty" placeholder="Ποσότητα" />
+      <button onclick="addItem()"><span id="addBtn">Προσθήκη</span></button>
+    </div>
+
+    <div id="itemsList"></div>
+
+    <div class="controls">
+      <button onclick="toggleTheme()" id="themeBtn">Σκοτεινή λειτουργία</button>
+      <button onclick="clearItems()" id="clearBtn">Καθαρισμός</button>
+    </div>
+
+    <div class="footer">
+      © Vasileios Nikitaras
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
