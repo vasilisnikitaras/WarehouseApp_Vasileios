@@ -1,5 +1,360 @@
 <!DOCTYPE html>
 <html lang="el">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Αποθήκη Vasileios</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f4f4f4;
+      color: #111;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body.dark {
+      background: #111;
+      color: #f4f4f4;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+    }
+
+    .lang-select,
+    .controls {
+      margin: 10px 0;
+    }
+
+    input,
+    select,
+    button {
+      padding: 8px;
+      margin: 5px;
+    }
+
+    .item {
+      padding: 5px;
+      border-bottom: 1px solid #ccc;
+      cursor: pointer;
+    }
+
+    .footer {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 0.9em;
+      color: #666;
+    }
+
+    #logoutBtn {
+      background-color: #d9534f;
+      margin-top: 1rem;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+    }
+
+    #logoutBtn:hover {
+      opacity: 0.9;
+    }
+
+    @media (max-width: 600px) {
+      .controls {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      input[type="text"],
+      input[type="number"] {
+        width: 100%;
+        margin-bottom: 0.5rem;
+      }
+    }
+
+    body.dark button {
+      background-color: #444;
+      color: #fff;
+    }
+    
+    .item.new {
+  background-color: #dff0d8;
+  animation: fadeOut 2s forwards;
+}
+
+@keyframes fadeOut {
+  0% { background-color: #dff0d8; }
+  100% { background-color: transparent; }
+}
+
+    
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1 id="title">Αποθήκη Vasileios</h1>
+  </header>
+  <div id="welcomeUser"></div>
+  <div class="container">
+    <div class="lang-select">
+      <label for="lang">Γλώσσα:</label>
+      <select id="lang">
+        <option value="el">Ελληνικά</option>
+        <option value="en">English</option>
+        <option value="fr">Français</option>
+      </select>
+    </div>
+
+    <div>
+      <input type="text" id="itemName" placeholder="Όνομα αντικειμένου" />
+      <input type="number" id="itemQty" placeholder="Ποσότητα" />
+      <button onclick="addItem()"><span id="addBtn">Προσθήκη</span></button>
+     
+
+    </div>
+    
+    
+    <select id="itemCategory">
+  <option value="Έπιπλα">Έπιπλα</option>
+  <option value="Ηλεκτρονικά">Ηλεκτρονικά</option>
+  <option value="Ρούχα">Ρούχα</option>
+  <option value="Άλλο">Άλλο</option>
+</select>
+
+    
+    
+    
+
+    <input type="text" id="searchInput" placeholder="🔍 Αναζήτηση..." />
+
+    <div id="itemsList"></div>
+
+    <div class="controls">
+      <button onclick="toggleTheme()" id="themeBtn">Σκοτεινή λειτουργία</button>
+      <button onclick="clearItems()" id="clearBtn">Καθαρισμός</button>
+      <button onclick="exportCSV()">📤 Εξαγωγή CSV</button>
+    </div>
+
+    <button id="logoutBtn" onclick="logout()">Αποσύνδεση</button>
+
+    <div class="footer">
+      © Vasileios Nikitaras
+    </div>
+  </div>
+
+  <script>
+    const translations = {
+      el: {
+        title: "Αποθήκη Vasileios",
+        addBtn: "Προσθήκη",
+        themeBtn: "Σκοτεινή λειτουργία",
+        clearBtn: "Καθαρισμός",
+        placeholderName: "Όνομα αντικειμένου",
+        placeholderQty: "Ποσότητα",
+      },
+      en: {
+        title: "Vasileios Warehouse",
+        addBtn: "Add",
+        themeBtn: "Dark Mode",
+        clearBtn: "Clear",
+        placeholderName: "Item name",
+        placeholderQty: "Quantity",
+      },
+      fr: {
+        title: "Entrepôt Vasileios",
+        addBtn: "Ajouter",
+        themeBtn: "Mode sombre",
+        clearBtn: "Effacer",
+        placeholderName: "Nom de l'article",
+        placeholderQty: "Quantité",
+      }
+    };
+    const itemNameInput = document.getElementById("itemName");
+    const itemQtyInput = document.getElementById("itemQty");
+    const itemsList = document.getElementById("itemsList");
+    const langSelect = document.getElementById("lang");
+    const searchInput = document.getElementById("searchInput");
+    const user = localStorage.getItem("loggedInUser") || "DemoUser";
+    document.getElementById("welcomeUser").textContent = `Καλωσήρθες, ${user}`;
+/*
+    function addItem() {
+      const name = itemNameInput.value.trim();
+      const qty = itemQtyInput.value.trim();
+      if (!name || !qty) return;
+      const item = {
+        name: name,
+        quantity: parseInt(qty),
+        timestamp: Date.now()
+      };
+      const inventory = JSON.parse(localStorage.getItem("inventory")) || [];
+      inventory.push(item);
+      localStorage.setItem("inventory", JSON.stringify(inventory));
+      displayInventory(searchInput.value);
+      itemNameInput.value = "";
+      itemQtyInput.value = "";
+    }
+    */
+    
+    
+    
+    
+    
+    function addItem() {
+  const name = itemNameInput.value.trim();
+  const qty = itemQtyInput.value.trim();
+  if (!name || !qty) return;
+
+  const item = {
+    name: name,
+    quantity: parseInt(qty),
+    timestamp: Date.now()
+  };
+
+  const inventory = JSON.parse(localStorage.getItem("inventory")) || [];
+  inventory.push(item);
+  localStorage.setItem("inventory", JSON.stringify(inventory));
+
+  searchInput.value = ""; // Καθαρισμός φίλτρου
+  displayInventory();
+
+  // Εφέ για το τελευταίο αντικείμενο
+  const items = document.querySelectorAll(".item");
+  const lastItem = items[items.length - 1];
+  if (lastItem) lastItem.classList.add("new");
+
+  itemNameInput.value = "";
+  itemQtyInput.value = "";
+}
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    function displayInventory(filter = "") {
+      const inventory = JSON.parse(localStorage.getItem("inventory")) || [];
+      itemsList.innerHTML = "";
+      inventory.forEach((item, index) => {
+        if (item.name.toLowerCase().includes(filter.toLowerCase())) {
+          const div = document.createElement("div");
+          div.className = "item";
+          div.innerHTML = `<span>${item.name}</span> — <span>${item.quantity}</span>`;
+          div.onclick = () => editItem(index);
+          itemsList.appendChild(div);
+        }
+      });
+    }
+
+    function editItem(index) {
+      const inventory = JSON.parse(localStorage.getItem("inventory")) || [];
+      const item = inventory[index];
+      const newName = prompt("Νέο όνομα:", item.name);
+      const newQty = prompt("Νέα ποσότητα:", item.quantity);
+      if (newName && newQty) {
+        item.name = newName.trim();
+        item.quantity = parseInt(newQty);
+        inventory[index] = item;
+        localStorage.setItem("inventory", JSON.stringify(inventory));
+        displayInventory(searchInput.value);
+      }
+    }
+
+    function clearItems() {
+      localStorage.removeItem("inventory");
+      itemsList.innerHTML = "";
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle("dark");
+      const themeBtn = document.getElementById("themeBtn");
+      themeBtn.textContent = translations[langSelect.value].themeBtn;
+    }
+
+    function updateLanguage() {
+      const lang = langSelect.value;
+      document.getElementById("title").textContent = translations[lang].title;
+      document.getElementById("addBtn").textContent = translations[lang].addBtn;
+      document.getElementById("themeBtn").textContent = translations[lang].themeBtn;
+      document.getElementById("clearBtn").textContent = translations[lang].clearBtn;
+      itemNameInput.placeholder = translations[lang].placeholderName;
+      itemQtyInput.placeholder = translations[lang].placeholderQty;
+    }
+
+    function logout() {
+      localStorage.removeItem("inventory");
+      document.getElementById("welcomeUser").textContent = "Καλωσήρθες, DemoUser";
+      displayInventory(searchInput.value);
+    }
+
+    function exportCSV() {
+      const inventory = JSON.parse(localStorage.getItem("inventory")) || [];
+      let csv = "Name,Quantity\n";
+      inventory.forEach(item => {
+        csv += `${item.name},${item.quantity}\n`;
+      });
+      const blob = new Blob([csv], {
+        type: "text/csv"
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "inventory.csv";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+    langSelect.addEventListener("change", updateLanguage);
+    searchInput.addEventListener("input", () => displayInventory(searchInput.value));
+    updateLanguage();
+    window.onload = () => displayInventory();
+  </script>
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--<!DOCTYPE html>
+<html lang="el">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -41,10 +396,11 @@
       © Vasileios Nikitaras
     </div>
   </div>
-  
+  -->
 <!-- <button onclick="logout()">Αποσύνδεση</button> -->
 
-
+<!--
   <script src="script.js"></script>
 </body>
 </html>
+-->
